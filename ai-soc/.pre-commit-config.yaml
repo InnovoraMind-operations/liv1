@@ -1,0 +1,46 @@
+# ==============================================================================
+# Pre-commit Hook Configuration — AI-SOC
+# ==============================================================================
+# Install pre-commit:  pip install pre-commit
+# Activate on repo:   pre-commit install
+# Run manually:       pre-commit run --all-files
+# ==============================================================================
+
+repos:
+  # ── Secret detection — catch accidental key/password commits ──────────────
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        name: Detect secrets
+        args: ['--baseline', '.secrets.baseline']
+        exclude: |
+          (?x)^(
+            backend/\.env\.example|
+            .*\.md
+          )$
+
+  # ── General file hygiene ──────────────────────────────────────────────────
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ['--maxkb=500']
+      # Block committing private keys
+      - id: detect-private-key
+        name: Detect private keys
+      # Ensure .env files are not committed
+      - id: check-symlinks
+
+  # ── Python — no debug print / pdb statements ─────────────────────────────
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: debug-statements
+        language_version: python3

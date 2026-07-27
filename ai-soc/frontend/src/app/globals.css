@@ -1,0 +1,146 @@
+@import "tailwindcss";
+
+/* -------------------------------------------------------------------------
+   AI-SOC Global Styles — Forest Green × Gold Executive Theme
+   Fonts loaded via <link> in layout.tsx (not CSS @import) to avoid
+   Tailwind v4 Turbopack @import ordering restrictions.
+   ----------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------
+   Design Tokens — Forest Green × Gold Palette
+   ----------------------------------------------------------------------- */
+:root {
+  /* Backgrounds — near-black forest */
+  --color-bg-base:     #041009;   /* near-black forest green */
+  --color-bg-surface:  #081810;   /* slightly lighter canopy */
+  --color-bg-elevated: #0D2218;   /* card / panel surface */
+  --color-border:      #172E1E;   /* muted forest border */
+
+  /* Text */
+  --color-text-primary: #F5F0E8;   /* warm off-white */
+  --color-text-muted:   #8A9E8E;   /* muted sage */
+
+  /* Metallic Gold */
+  --color-gold:         #D4AF37;   /* classic gold */
+  --color-gold-bright:  #F0CB45;   /* highlight sheen */
+  --color-gold-dim:     #8B6914;   /* dark brass shadow */
+
+  /* Severity — retained for data fidelity */
+  --color-critical:   #f43f5e;
+  --color-high:       #f97316;
+  --color-medium:     #eab308;
+  --color-info:       #60a5fa;
+}
+
+/* -------------------------------------------------------------------------
+   Base Reset
+   ----------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: #041009;
+  color: var(--color-text-primary);
+  font-family: "Inter", system-ui, sans-serif;
+  line-height: 1.6;
+  min-height: 100dvh;
+}
+
+/* -------------------------------------------------------------------------
+   Monospace — JetBrains Mono
+   ----------------------------------------------------------------------- */
+.font-mono,
+code,
+kbd,
+samp,
+pre {
+  font-family: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+  font-feature-settings: "liga" 1, "calt" 1;
+}
+
+/* -------------------------------------------------------------------------
+   Scrollbar
+   ----------------------------------------------------------------------- */
+::-webkit-scrollbar        { width: 4px; height: 4px; }
+::-webkit-scrollbar-track  { background: var(--color-bg-base); }
+::-webkit-scrollbar-thumb  { background: var(--color-bg-elevated); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #1E4530; }
+
+/* -------------------------------------------------------------------------
+   Selection & Focus
+   ----------------------------------------------------------------------- */
+::selection {
+  background: rgba(212, 175, 55, 0.22);
+  color: #FFFBEA;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/*
+  The global Golden Ratio spiral is now rendered as a proper inline SVG
+  in app/layout.tsx (position: fixed, pointer-events: none, z-index: 0).
+  This gives full control over the SVG geometry and avoids data-URI escaping.
+  The body::before rule has been intentionally removed.
+*/
+
+/* Ensure page content always sits above the fixed background layers */
+body > div[style*="z-index: 1"] {
+  position: relative;
+  z-index: 1;
+}
+
+/* -------------------------------------------------------------------------
+   Animations
+   ----------------------------------------------------------------------- */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.4s ease-out forwards;
+}
+
+/* Shimmer — skeleton loader sweep */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, #081810 25%, #0D2218 50%, #081810 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+/* Triage glow — neon gold breathe on agent status panel */
+@keyframes triage-pulse-glow {
+  0%, 100% { box-shadow: 0 0 6px -1px rgba(212, 175, 55, 0.25); }
+  50%       { box-shadow: 0 0 16px -2px rgba(212, 175, 55, 0.55); }
+}
+
+.animate-triage-glow {
+  animation: triage-pulse-glow 2s ease-in-out infinite;
+}
+
+/* Gold pulse — for telemetry badge dots */
+@keyframes gold-ping {
+  75%, 100% { transform: scale(2); opacity: 0; }
+}
+
+.animate-gold-ping {
+  animation: gold-ping 1.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+}

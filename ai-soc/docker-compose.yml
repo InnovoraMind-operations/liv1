@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: aisoc-postgres
+    environment:
+      POSTGRES_USER: postgres
+      # !! Never hardcode the password here.
+      # Set POSTGRES_PASSWORD in the shell or in a .env file at the repo root.
+      # Generate a strong password with:
+      #   python -c "import secrets; print(secrets.token_urlsafe(32))"
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD env var is not set. See SECURITY.md.}
+      POSTGRES_DB: aisoc
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

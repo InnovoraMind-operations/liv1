@@ -1,0 +1,138 @@
+# ==============================================================================
+# AI-SOC Monorepo .gitignore
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. Backend (Python / FastAPI)
+# ------------------------------------------------------------------------------
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+backend/build/
+backend/develop-eggs/
+backend/dist/
+backend/downloads/
+backend/eggs/
+backend/.eggs/
+backend/lib/
+backend/lib64/
+backend/parts/
+backend/sdist/
+backend/var/
+backend/wheels/
+backend/share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Environment Variables
+backend/.env
+backend/.env.local
+backend/.env.*.local
+
+# ------------------------------------------------------------------------------
+# 2. Frontend (Next.js / Node)
+# ------------------------------------------------------------------------------
+# dependencies
+frontend/node_modules/
+frontend/.pnp
+frontend/.pnp.js
+
+# testing
+frontend/coverage/
+
+# next.js
+frontend/.next/
+frontend/out/
+
+# production
+frontend/build/
+
+# misc
+frontend/.DS_Store
+frontend/*.pem
+
+# debug
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+
+# local env files
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# vercel
+frontend/.vercel
+
+# turbopack
+frontend/.turbo
+
+# typescript
+frontend/*.tsbuildinfo
+frontend/next-env.d.ts
+
+# ------------------------------------------------------------------------------
+# 3. IDE / OS
+# ------------------------------------------------------------------------------
+# VS Code
+.vscode/
+*.code-workspace
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# ------------------------------------------------------------------------------
+# 4. Security — cryptographic keys and secrets
+# ------------------------------------------------------------------------------
+# RSA private and public keys — NEVER commit these
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+SECURITY.md
+CODEOWNERS
+
+# Generated key directory from generate_keys.py
+backend/keys/
+
+
+# detect-secrets baseline (contains hash of real secrets — keep local only)
+.secrets.baseline
+
+# pre-commit cache
+.pre-commit-cache/
