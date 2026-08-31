@@ -392,8 +392,8 @@ function PlaybookStep({
 }) {
   const meta = {
     automated: { colour: "#34d399", label: "Automated" },
-    manual:    { colour: "#f87171", label: "Approval Gate" },
-    hybrid:    { colour: GOLD,      label: "Policy-Gated" },
+    manual:    { colour: "#D4AF37", label: "Approval Gate" },
+    hybrid:    { colour: "#60a5fa", label: "Policy-Gated" },
   };
   const { colour, label } = meta[status];
   return (

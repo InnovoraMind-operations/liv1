@@ -57,14 +57,14 @@ const STATUS_CONFIG: Record<
   IncidentStatus,
   { label: string; color: string; bg: string }
 > = {
-  new:           { label: "NEW",           color: "#f87171", bg: "rgba(244,63,94,0.12)"  },
-  triaged:       { label: "TRIAGED",       color: "#fb923c", bg: "rgba(249,115,22,0.12)" },
-  triaging:      { label: "TRIAGING",      color: "#fb923c", bg: "rgba(249,115,22,0.12)" },
+  new:           { label: "NEW",           color: "#fbbf24", bg: "rgba(251,191,36,0.12)"  },
+  triaged:       { label: "TRIAGED",       color: "#38bdf8", bg: "rgba(56,189,248,0.12)" },
+  triaging:      { label: "TRIAGING",      color: "#38bdf8", bg: "rgba(56,189,248,0.12)" },
   investigating: { label: "INVESTIGATING", color: "#D4AF37", bg: "rgba(212,175,55,0.10)" },
   contained:     { label: "CONTAINED",     color: "#34d399", bg: "rgba(52,211,153,0.12)" },
   eradicated:    { label: "ERADICATED",    color: "#60a5fa", bg: "rgba(96,165,250,0.12)" },
   recovering:    { label: "RECOVERING",    color: "#a78bfa", bg: "rgba(167,139,250,0.12)"},
-  resolved:      { label: "RESOLVED",      color: "#8A9E8E", bg: "rgba(138,158,142,0.10)"},
+  resolved:      { label: "RESOLVED",      color: "#34d399", bg: "rgba(52,211,153,0.10)"},
   closed:        { label: "CLOSED",        color: "#8A9E8E", bg: "rgba(138,158,142,0.10)"},
   false_positive:{ label: "FALSE +",       color: "#3D5C46", bg: "rgba(61,92,70,0.15)"  },
 };
