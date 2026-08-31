@@ -6,8 +6,7 @@ import { redirect } from "next/navigation";
 const getApiUrl = () => process.env.API_URL ?? "http://localhost:8000";
 
 // ---------------------------------------------------------------------------
-// Input validation helpers (server-side — not a replacement for backend
-// validation, but prevents malformed requests ever reaching the network)
+// Input validation helpers
 // ---------------------------------------------------------------------------
 
 function sanitizeInput(value: string, maxLength = 128): string {
@@ -18,11 +17,19 @@ function isValidUsername(username: string): boolean {
   return /^[a-zA-Z0-9_\-]{3,32}$/.test(username);
 }
 
+export type LoginState = {
+  error: string;
+  success: boolean;
+};
+
 // ---------------------------------------------------------------------------
 // loginUser — called by the login form via useActionState
 // ---------------------------------------------------------------------------
 
-export async function loginUser(prevState: any, formData: FormData) {
+export async function loginUser(
+  prevState: LoginState,
+  formData: FormData
+): Promise<LoginState> {
   const raw_username = formData.get("username")?.toString() || "";
   const raw_password = formData.get("password")?.toString() || "";
 
@@ -31,17 +38,18 @@ export async function loginUser(prevState: any, formData: FormData) {
 
   // ── Server-side pre-validation ────────────────────────────────────────
   if (!username || !password) {
-    return { error: "Username and password are required." };
+    return { error: "Username and password are required.", success: false };
   }
 
   if (!isValidUsername(username)) {
     return {
       error: "Username must be 3–32 characters and contain only letters, digits, underscores, or hyphens.",
+      success: false,
     };
   }
 
   if (password.length < 12) {
-    return { error: "Password must be at least 12 characters." };
+    return { error: "Password must be at least 12 characters.", success: false };
   }
 
   // ── Call backend ──────────────────────────────────────────────────────
@@ -54,35 +62,34 @@ export async function loginUser(prevState: any, formData: FormData) {
     });
 
     if (!res.ok) {
-      return { error: "Invalid credentials. Access denied." };
+      return { error: "Invalid credentials. Access denied.", success: false };
     }
 
     const data = await res.json();
     const token = data.access_token;
 
     if (!token) {
-      return { error: "No session token received from backend." };
+      return { error: "No session token received from backend.", success: false };
     }
 
     const IS_PROD = process.env.NODE_ENV === "production";
     const cookieStore = await cookies();
 
     cookieStore.set(
-      // __Secure- prefix: browser rejects this cookie unless connection is HTTPS
       IS_PROD ? "__Secure-soc_session" : "soc_session",
       token,
       {
-        httpOnly: true,               // Not accessible from JS
-        secure: IS_PROD,              // HTTPS only in production
-        sameSite: "strict",           // CSRF protection
+        httpOnly: true,
+        secure: IS_PROD,
+        sameSite: "strict",
         path: "/",
-        maxAge: 60 * 30,              // 30 minutes — matches backend JWT expiry
+        maxAge: 60 * 30,
       }
     );
 
-    return { success: true };
+    return { error: "", success: true };
   } catch {
-    return { error: "Connection to backend failed. Is the server running?" };
+    return { error: "Connection to backend failed. Is the server running?", success: false };
   }
 }
 

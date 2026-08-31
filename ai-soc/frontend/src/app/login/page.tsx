@@ -39,7 +39,8 @@ export default function LoginPage() {
             className="flex h-12 w-12 items-center justify-center rounded ring-1"
             style={{
               backgroundColor: "rgba(212,175,55,0.08)",
-              ringColor: "rgba(212,175,55,0.30)",
+              borderColor: "rgba(212,175,55,0.30)",
+              boxShadow: "0 0 16px -2px rgba(212,175,55,0.25)",
             }}
           >
             <svg

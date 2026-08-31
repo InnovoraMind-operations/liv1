@@ -21,7 +21,7 @@ export async function DELETE(req: NextRequest) {
 
   if (!token) {
     return NextResponse.json(
-      { detail: "Not authenticated — no active session found." },
+      { detail: "Not authenticated -- no active session found." },
       { status: 401 }
     );
   }

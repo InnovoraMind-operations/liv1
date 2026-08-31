@@ -115,60 +115,67 @@ function IconMap() {
 
 const PLATFORM_MODULES: PlatformModule[] = [
   {
-    name: "Authentication Layer",
+    name: "SOC Command Dashboard",
     description:
-      "JWT + OAuth2 with RBAC. Analyst / Tier-2 / Admin role separation.",
-    stage: "planned",
-    icon: <IconShield />,
-  },
-  {
-    name: "Multi-Agent Core",
-    description:
-      "LangGraph orchestration mesh with tool-calling agents for autonomous triage.",
-    stage: "planned",
-    icon: <IconCpu />,
-  },
-  {
-    name: "Windows Event Tailer",
-    description:
-      "Real-time Event Log ingestion (4625, 4672, 4688) via WMI / ETW subscriptions.",
-    stage: "development",
-    icon: <IconTerminal />,
-  },
-  {
-    name: "Packet Sniffer",
-    description:
-      "libpcap-based network flow analyser with anomaly detection hooks.",
-    stage: "development",
-    icon: <IconNetwork />,
-  },
-  {
-    name: "Alert Queue Engine",
-    description:
-      "Normalized incident storage with severity scoring and deduplication.",
-    stage: "staging",
-    icon: <IconZap />,
-  },
-  {
-    name: "REST API Core",
-    description:
-      "FastAPI backend with CORS, Pydantic v2 schemas, and async routing.",
-    stage: "live",
-    icon: <IconServer />,
-  },
-  {
-    name: "SOC Dashboard",
-    description:
-      "Next.js 15 App Router frontend with real-time status polling.",
+      "Next.js 15 App Router frontend with real-time status polling & evidence inspection.",
     stage: "live",
     icon: <IconLayoutDashboard />,
   },
   {
+    name: "REST API & Ingestion Core",
+    description:
+      "FastAPI backend with Pydantic v2 schemas, CORS, and health telemetry.",
+    stage: "live",
+    icon: <IconServer />,
+  },
+  {
+    name: "ActionSpec & Policy Gate",
+    description:
+      "Deterministic policy evaluation and ActionProposal schema contract.",
+    stage: "live",
+    icon: <IconShield />,
+  },
+  {
+    name: "Action Broker (HITL)",
+    description:
+      "Policy-authorized executor with scoped credentials and auto-rollback TTL.",
+    stage: "staging",
+    icon: <IconZap />,
+  },
+  {
+    name: "Canonical Alert Queue",
+    description:
+      "Normalized incident store with evidence bundles and immutable audit trail.",
+    stage: "staging",
+    icon: <IconTerminal />,
+  },
+  {
+    name: "Multi-Agent LangGraph Core",
+    description:
+      "LangGraph orchestration mesh with Triage, Context, and Response agents.",
+    stage: "development",
+    icon: <IconCpu />,
+  },
+  {
     name: "MITRE ATT&CK Mapper",
     description:
-      "Automatic TTP tagging using the Enterprise ATT&CK knowledge base.",
-    stage: "planned",
+      "Calibrated candidate retrieval and TTP tagging with confidence scoring.",
+    stage: "development",
     icon: <IconMap />,
+  },
+  {
+    name: "Windows Event & Packet Sensors",
+    description:
+      "Event Log tailer (4625/4688) and libpcap network flow collector.",
+    stage: "development",
+    icon: <IconNetwork />,
+  },
+  {
+    name: "Enterprise SSO & API Keys",
+    description:
+      "OIDC/SAML integration, phishing-resistant MFA, and scoped API key lifecycle.",
+    stage: "planned",
+    icon: <IconShield />,
   },
 ];
 

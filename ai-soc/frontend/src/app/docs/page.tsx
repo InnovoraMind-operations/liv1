@@ -7,9 +7,11 @@ import { useState } from "react";
 // ---------------------------------------------------------------------------
 
 const NAV_ITEMS = [
-  { id: "architecture",        label: "Architecture",          icon: "ARCH"   },
+  { id: "architecture",        label: "3-Plane Architecture",  icon: "ARCH"   },
   { id: "agent-orchestration", label: "Agent Orchestration",   icon: "ORCH"   },
-  { id: "log-ingestion",       label: "Log Ingestion (Wazuh)", icon: "INGST"  },
+  { id: "actionspec-contract", label: "ActionSpec & Policy",   icon: "SPEC"   },
+  { id: "autonomy-tiers",      label: "Autonomy Tiers",        icon: "TIER"   },
+  { id: "log-ingestion",       label: "Secure Ingestion",      icon: "INGST"  },
   { id: "splunk-enrichment",   label: "Splunk Enrichment",     icon: "ENRICH" },
   { id: "operator-playbooks",  label: "Operator Playbooks",    icon: "PLAY"   },
 ] as const;
@@ -266,16 +268,26 @@ function InfoCard({
 }
 
 // ---------------------------------------------------------------------------
-// Architecture diagram
+// 3-Plane Architecture Diagram
 // ---------------------------------------------------------------------------
 
 function ArchDiagram() {
-  const nodes = [
-    { label: "Wazuh",     sub: "Log Agent"     },
-    { label: "Splunk",    sub: "SIEM Enricher" },
-    { label: "FastAPI",   sub: "REST Gateway"  },
-    { label: "LangGraph", sub: "Orchestrator"  },
-    { label: "Postgres",  sub: "State Store"   },
+  const planes = [
+    {
+      title: "1. Telemetry / Data Plane",
+      items: ["Wazuh / EDR / Cloud / Network", "TLS Transport + Ingestion Bus", "Canonical Normalizer & Store"],
+      color: "#60a5fa",
+    },
+    {
+      title: "2. AI Reasoning Plane",
+      items: ["Authoritative SIEM (Splunk)", "LangGraph Multi-Agent Mesh", "Structured ActionProposal"],
+      color: GOLD,
+    },
+    {
+      title: "3. Response Control Plane",
+      items: ["Deterministic Policy Engine", "HITL Approval Service", "Action Broker (TTL + Rollback)"],
+      color: "#34d399",
+    },
   ];
 
   return (
@@ -284,7 +296,7 @@ function ArchDiagram() {
         borderRadius: 10,
         border: `1px solid ${BORDER_CARD}`,
         backgroundColor: BG_CARD,
-        padding: "28px 24px",
+        padding: "24px",
         marginBottom: 28,
         backdropFilter: "blur(6px)",
       }}
@@ -296,114 +308,67 @@ function ArchDiagram() {
           letterSpacing: "0.18em",
           textTransform: "uppercase",
           color: GOLD_TEXT,
-          marginBottom: 20,
+          marginBottom: 16,
         }}
       >
-        System Topology -- Phase 2
+        Three-Plane System Architecture
       </div>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(5, 1fr)",
-          gap: 10,
-          alignItems: "stretch",
-        }}
-      >
-        {nodes.map((n, i) => (
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14 }}>
+        {planes.map((p, idx) => (
           <div
-            key={i}
+            key={idx}
             style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 6,
+              borderRadius: 8,
+              border: `1px solid ${p.color}33`,
+              backgroundColor: "rgba(10,28,18,0.85)",
+              padding: "16px",
             }}
           >
-            <div
-              style={{
-                width: "100%",
-                borderRadius: 8,
-                border: `1px solid ${GOLD_MID}`,
-                backgroundColor: "rgba(10,28,18,0.80)",
-                padding: "12px 6px",
-                textAlign: "center",
-                boxShadow: "0 0 18px -6px rgba(212,175,55,0.15)",
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontSize: 11,
-                  fontWeight: 700,
-                  color: FG_PRIMARY,
-                  marginBottom: 2,
-                }}
-              >
-                {n.label}
-              </div>
-              <div
-                style={{
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontSize: 8,
-                  color: FG_DIMMER,
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                }}
-              >
-                {n.sub}
-              </div>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: p.color, marginBottom: 10 }}>
+              {p.title}
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {p.items.map((it, i) => (
+                <div
+                  key={i}
+                  style={{
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontSize: 9.5,
+                    color: FG_PRIMARY,
+                    backgroundColor: "rgba(4,16,9,0.7)",
+                    padding: "6px 10px",
+                    borderRadius: 4,
+                    border: "1px solid rgba(212,175,55,0.1)",
+                  }}
+                >
+                  {it}
+                </div>
+              ))}
             </div>
           </div>
         ))}
       </div>
 
-      {/* Arrow connector row */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-around",
-          padding: "6px 8% 0",
-        }}
-      >
-        {[0, 1, 2, 3].map((i) => (
-          <svg key={i} width="36" height="12" viewBox="0 0 36 12" fill="none">
-            <line x1="0" y1="6" x2="30" y2="6" stroke={GOLD} strokeOpacity="0.35" strokeWidth="1" />
-            <polygon points="30,3 36,6 30,9" fill={GOLD} fillOpacity="0.50" />
-          </svg>
-        ))}
-      </div>
-
-      {/* Legend */}
-      <div
-        style={{
-          marginTop: 20,
-          paddingTop: 16,
-          borderTop: `1px solid ${GOLD_DIM}`,
-          display: "flex",
-          flexWrap: "wrap",
-          gap: 16,
-        }}
-      >
-        {[
-          { colour: "#60a5fa", label: "Raw Log Stream" },
-          { colour: GOLD,      label: "Enriched Event"  },
-          { colour: "#34d399", label: "Agent Decision"  },
-          { colour: "#f87171", label: "Critical Alert"  },
-        ].map(({ colour, label }) => (
-          <div key={label} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <div style={{ width: 8, height: 8, borderRadius: 2, backgroundColor: colour }} />
-            <span
-              style={{
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: 9,
-                color: FG_MUTED,
-                letterSpacing: "0.10em",
-              }}
-            >
-              {label}
-            </span>
-          </div>
+      <div style={{ marginTop: 18, paddingTop: 14, borderTop: `1px solid ${GOLD_DIM}`, display: "flex", flexWrap: "wrap", gap: 12 }}>
+        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: FG_DIMMER }}>
+          CROSS-CUTTING SERVICES:
+        </span>
+        {["Enterprise Identity & RBAC", "Secrets / KMS", "Tenant Isolation", "Immutable Audit Log", "OpenTelemetry Traces"].map((tag) => (
+          <span
+            key={tag}
+            style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 8.5,
+              color: GOLD_TEXT,
+              backgroundColor: "rgba(212,175,55,0.06)",
+              padding: "2px 8px",
+              borderRadius: 3,
+              border: `1px solid ${GOLD_DIM}`,
+            }}
+          >
+            {tag}
+          </span>
         ))}
       </div>
     </div>
@@ -411,7 +376,7 @@ function ArchDiagram() {
 }
 
 // ---------------------------------------------------------------------------
-// Playbook step row
+// Playbook Step Row
 // ---------------------------------------------------------------------------
 
 function PlaybookStep({
@@ -427,15 +392,15 @@ function PlaybookStep({
 }) {
   const meta = {
     automated: { colour: "#34d399", label: "Automated" },
-    manual:    { colour: "#f87171", label: "Manual"    },
-    hybrid:    { colour: GOLD,      label: "Hybrid"    },
+    manual:    { colour: "#f87171", label: "Approval Gate" },
+    hybrid:    { colour: GOLD,      label: "Policy-Gated" },
   };
   const { colour, label } = meta[status];
   return (
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "32px 1fr 120px 90px",
+        gridTemplateColumns: "32px 1fr 140px 110px",
         alignItems: "center",
         gap: 12,
         padding: "10px 14px",
@@ -447,9 +412,10 @@ function PlaybookStep({
     >
       <div
         style={{
-          width: 28,
-          height: 28,
+          width: 24,
+          height: 24,
           borderRadius: "50%",
+          backgroundColor: "rgba(212,175,55,0.12)",
           border: `1px solid ${GOLD_MID}`,
           display: "flex",
           alignItems: "center",
@@ -458,21 +424,14 @@ function PlaybookStep({
           fontSize: 10,
           fontWeight: 700,
           color: GOLD,
-          flexShrink: 0,
         }}
       >
         {step}
       </div>
-      <span style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: 13, color: FG_BODY }}>
+      <span style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: 13, color: FG_PRIMARY }}>
         {action}
       </span>
-      <span
-        style={{
-          fontFamily: "'JetBrains Mono', monospace",
-          fontSize: 10,
-          color: FG_MUTED,
-        }}
-      >
+      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: FG_MUTED }}>
         {owner}
       </span>
       <span
@@ -480,10 +439,9 @@ function PlaybookStep({
           fontFamily: "'JetBrains Mono', monospace",
           fontSize: 9,
           fontWeight: 700,
-          letterSpacing: "0.12em",
-          textTransform: "uppercase",
           color: colour,
-          textAlign: "right",
+          letterSpacing: "0.10em",
+          textTransform: "uppercase",
         }}
       >
         {label}
@@ -493,40 +451,136 @@ function PlaybookStep({
 }
 
 // ---------------------------------------------------------------------------
-// Main page
+// Autonomy Tiers Table
 // ---------------------------------------------------------------------------
 
-const WAZUH_CODE = `# Normalised log payload forwarded to FastAPI
-import json, requests, datetime
+function AutonomyTiersTable() {
+  const tiers = [
+    {
+      tier: "Tier 0 – Observe",
+      examples: "Summarize evidence, ATT&CK mapping, case notes, query generation.",
+      auth: "Automatic; read-only tools.",
+      color: "#60a5fa",
+    },
+    {
+      tier: "Tier 1 – Administrative",
+      examples: "Create case ticket, add metadata tags, request enrichment, draft notification.",
+      auth: "Automatic when reversible and tenant-approved.",
+      color: "#34d399",
+    },
+    {
+      tier: "Tier 2 – Bounded Containment",
+      examples: "Short-lived isolation of non-critical endpoint, low-blast-radius rule.",
+      auth: "Policy-governed; analyst approval in early releases, bounded auto-execution post-validation.",
+      color: "#fbbf24",
+    },
+    {
+      tier: "Tier 3 – Disruptive",
+      examples: "Perimeter firewall block, disable account, isolate critical server, revoke credentials.",
+      auth: "Explicit Analyst Approval Required; dual approval for critical infrastructure.",
+      color: "#f97316",
+    },
+    {
+      tier: "Tier 4 – Destructive / Irreversible",
+      examples: "Terminate infrastructure, wipe endpoint, delete data, broad identity changes.",
+      auth: "Never LLM-only. Requires deterministic controls, privileged workflow, and dual control.",
+      color: "#f87171",
+    },
+  ];
 
+  return (
+    <div
+      style={{
+        borderRadius: 10,
+        border: `1px solid ${BORDER_CARD}`,
+        backgroundColor: BG_CARD,
+        padding: "20px",
+        marginBottom: 28,
+        backdropFilter: "blur(6px)",
+      }}
+    >
+      <div
+        style={{
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: 9,
+          letterSpacing: "0.18em",
+          textTransform: "uppercase",
+          color: GOLD_TEXT,
+          marginBottom: 16,
+        }}
+      >
+        Autonomy Tiers & Action Authorization Matrix
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {tiers.map((t) => (
+          <div
+            key={t.tier}
+            style={{
+              padding: "12px 14px",
+              borderRadius: 6,
+              borderLeft: `3px solid ${t.color}`,
+              backgroundColor: "rgba(10,28,18,0.70)",
+              display: "grid",
+              gridTemplateColumns: "180px 1fr 1fr",
+              gap: 16,
+              alignItems: "center",
+            }}
+          >
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: t.color }}>
+              {t.tier}
+            </div>
+            <div style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: 12, color: FG_BODY }}>
+              {t.examples}
+            </div>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: FG_PRIMARY, backgroundColor: "rgba(0,0,0,0.3)", padding: "6px 10px", borderRadius: 4 }}>
+              {t.auth}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Code Snippets
+// ---------------------------------------------------------------------------
+
+const WAZUH_CODE = `# log_forwarder.py -- Secure Ingestion with TLS & Buffering
+import json, requests, datetime, uuid
+
+# Authenticated payload with idempotency key and source integrity metadata
 payload = {
+    "idempotency_key": f"idemp_{uuid.uuid4()}",
+    "tenant_id": "tenant-acme-corp",
     "raw_log": json.dumps({
-        "timestamp":    datetime.datetime.utcnow().isoformat() + "Z",
-        "rule_id":      100002,
-        "rule_level":   12,
-        "description":  "Multiple failed SSH login attempts",
-        "agent": {
-            "id":   "001",
-            "name": "prod-web-01",
-            "ip":   "10.0.1.55"
-        },
-        "data": {
-            "srcip":    "185.220.101.47",
-            "dstport":  22,
-            "protocol": "ssh",
-            "attempts": 47
-        }
+        "timestamp": datetime.datetime.utcnow().isoformat() + "Z",
+        "rule_id": 100002,
+        "rule_level": 12,
+        "description": "Multiple failed SSH login attempts",
+        "agent": {"id": "001", "name": "prod-web-01", "ip": "10.0.1.55"},
+        "data": {"srcip": "185.220.101.47", "dstport": 22, "protocol": "ssh", "attempts": 47}
     })
 }
 
+# Forwarded over mutual TLS with store-and-forward local buffering
 resp = requests.post(
-    "http://localhost:8000/api/alerts/analyze",
+    "https://api.soc.internal/api/alerts/analyze",
     json=payload,
+    headers={"Authorization": f"Bearer {BEARER_TOKEN}"},
+    cert=("/etc/ssl/client.crt", "/etc/ssl/client.key"),
     timeout=10
 )
 print(resp.status_code, resp.json())`;
-const SPLUNK_CODE = `import splunklib.client as client
+
+const SPLUNK_CODE = `# Splunk Enrichment Adapter -- Parameterized Safe Search
+import ipaddress
+import splunklib.client as client
 import splunklib.results as results
+
+# 1. Canonical validation: Strictly validate IP format to eliminate query injection
+validated_ip = str(ipaddress.ip_address(extracted_ip))
 
 service = client.connect(
     host="splunk.internal",
@@ -535,43 +589,103 @@ service = client.connect(
     password=SPLUNK_TOKEN,
 )
 
-query = (
-    'search index=notable sourcetype=stash '
-    '| where src_ip="{ip}" '
-    '| head 5 '
-    '| fields src_ip, rule_name, urgency, owner'
-)
+# 2. Parameterized search using validated literal to prevent search string manipulation
+query = "search index=notable sourcetype=stash src_ip=$ip$ | head 5 | fields src_ip, rule_name, urgency, owner"
 
-job = service.jobs.oneshot(query.format(ip=extracted_ip))
-for item in results.JSONResultsReader(job):
-    print(item)  # -> dict per notable event`;
+job = service.jobs.create(
+    query,
+    args={"ip": validated_ip},
+    exec_mode="blocking"
+)
+for item in results.JSONResultsReader(job.results()):
+    print(item)`;
+
+const ACTIONSPEC_CODE = `# ActionSpec Contract Definition
+ActionProposal {
+  tenant_id:           "tenant-acme-corp",
+  incident_id:         "INC-8802",
+  action_type:         "firewall_block",
+  target_type:         "ip",
+  target_id:           "185.220.101.47",
+  evidence_refs:       ["EVID-001", "EVID-002", "EVID-003"],
+  rationale:           "Block malicious IP at perimeter firewall following 47 failed SSH attempts.",
+  risk_tier:           "tier_3_disruptive",
+  expected_effect:     "Terminate active credential guessing attacks immediately.",
+  blast_radius:        "Single External IP Address (185.220.101.47)",
+  ttl_seconds:         3600,  # 1-hour containment TTL with auto-rollback
+  preconditions:       ["Target IP is not on internal asset or vendor allowlist."],
+  postconditions:      ["Zero inbound connections permitted during verification."],
+  rollback_action:     "firewall_unblock(185.220.101.47)",
+  requested_by_agent:  "ResponseAgent_v1.2"
+}
+
+PolicyDecision {
+  decision:            "REQUIRE_APPROVAL",
+  policy_version:      "POL-SEC-2026-v3",
+  reason_codes:        ["TIER_3_DISRUPTIVE_ACTION", "PERIMETER_FIREWALL_CONTROL"],
+  required_approvers:  ["SOC_Analyst", "Security_Operator"]
+}
+
+ExecutionResult {
+  executor_id:         "ActionBroker_Perimeter_FW",
+  idempotency_key:     "idemp_act_001_185.220.101.47",
+  status:              "success",
+  verification_evidence: ["Rule #8802 active; probe verified 0 dropped packet anomalies."],
+  rollback_status:     "Active (Auto-rollback after 3600s)"
+}`;
+
 const PLAYBOOK_CODE = `# playbooks/PB-001-brute-force-ssh.yaml
+# Policy-Gated Playbook with Approval Step preceding Execution
 id: PB-001
 name: Brute Force SSH Response
-version: "1.0.0"
+version: "2.0.0"
 trigger:
   event_type: failed_ssh_login
   threshold_count: 10
   window_seconds: 60
-confidence_threshold: 0.82
+
+# LLM generates structured proposal; deterministic policy gates execution
 steps:
-  - id: verify
+  - id: 1_verify_correlation
     action: splunk_correlate
-    automated: true
-  - id: block_ip
-    action: firewall_block
-    automated: true
-    rollback_after: 3600
-  - id: notify
-    action: pagerduty_alert
-    severity: high
-    automated: true
-  - id: human_review
-    action: await_operator_approval
+    owner: ai_scorer
+    mode: automated
+
+  - id: 2_enrich_and_propose
+    action: generate_action_proposal
+    target_action: firewall_block
+    ttl_seconds: 3600
+    owner: context_agent
+    mode: automated
+
+  - id: 3_policy_and_approval_gate
+    action: await_analyst_approval
+    risk_tier: tier_3_disruptive
     timeout_seconds: 900
-  - id: ioc_export
+    owner: Human SOC / Policy Engine
+    mode: approval_gate  # <--- MUST APPROVE BEFORE EXECUTION
+
+  - id: 4_execute_action_broker
+    action: firewall_block
+    executor: action_broker
+    ttl_seconds: 3600
+    auto_rollback: true
+    owner: action_broker
+    mode: policy_gated_execution
+
+  - id: 5_verify_and_notify
+    action: verify_and_notify_responders
+    owner: orchestrator
+    mode: automated
+
+  - id: 6_post_incident_ioc_export
     action: misp_push
-    automated: false`;
+    owner: Analyst
+    mode: hybrid`;
+
+// ---------------------------------------------------------------------------
+// Page Component
+// ---------------------------------------------------------------------------
 
 export default function DocsPage() {
   const [active, setActive] = useState<SectionId>("architecture");
@@ -624,7 +738,7 @@ export default function DocsPage() {
               margin: 0,
             }}
           >
-            Technical Documentation
+            Technical Documentation & Control Specification
           </h1>
           <p
             style={{
@@ -635,7 +749,7 @@ export default function DocsPage() {
               marginBottom: 0,
             }}
           >
-            Phase 2 -- Architecture, integrations, and operator reference.
+            Architecture, ActionSpec contract, safety release gates, and operator reference.
           </p>
         </div>
       </div>
@@ -643,119 +757,82 @@ export default function DocsPage() {
       {/* ---- Two-column body ---- */}
       <div
         style={{
-          flex: 1,
           maxWidth: 1140,
           margin: "0 auto",
           width: "100%",
           display: "grid",
           gridTemplateColumns: "220px 1fr",
-          alignItems: "start",
-          padding: "0 32px",
+          gap: 0,
+          flex: 1,
         }}
       >
-
         {/* ======== SIDEBAR ======== */}
-        <nav
+        <aside
           style={{
-            position: "sticky",
-            top: 80,
+            borderRight: `1px solid ${FOREST_DARK}`,
             paddingTop: 32,
             paddingRight: 24,
-            paddingBottom: 32,
-            borderRight: `1px solid ${GOLD_DIM}`,
+            position: "sticky",
+            top: 72,
+            alignSelf: "start",
+            maxHeight: "calc(100vh - 72px)",
+            overflowY: "auto",
           }}
         >
           <div
             style={{
               fontFamily: "'JetBrains Mono', monospace",
-              fontSize: 8,
-              fontWeight: 700,
-              letterSpacing: "0.22em",
+              fontSize: 9,
+              letterSpacing: "0.18em",
               textTransform: "uppercase",
               color: FG_DIMMER,
-              marginBottom: 16,
+              marginBottom: 12,
+              paddingLeft: 8,
             }}
           >
-            Contents
+            Sections
           </div>
-          <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 2 }}>
-            {NAV_ITEMS.map((item) => (
-              <li key={item.id}>
+          <nav style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            {NAV_ITEMS.map((item) => {
+              const isSelected = active === item.id;
+              return (
                 <button
+                  key={item.id}
                   onClick={() => scrollTo(item.id)}
                   style={{
-                    width: "100%",
-                    textAlign: "left",
-                    background: active === item.id ? "rgba(212,175,55,0.08)" : "transparent",
-                    border: active === item.id ? `1px solid ${GOLD_DIM}` : "1px solid transparent",
-                    borderRadius: 6,
-                    padding: "8px 10px",
-                    cursor: "pointer",
                     display: "flex",
                     alignItems: "center",
-                    gap: 8,
-                    transition: "background 0.15s, border-color 0.15s",
+                    gap: 10,
+                    padding: "8px 10px",
+                    borderRadius: 6,
+                    border: isSelected ? `1px solid ${GOLD_MID}` : "1px solid transparent",
+                    backgroundColor: isSelected ? "rgba(212,175,55,0.08)" : "transparent",
+                    color: isSelected ? GOLD : FG_MUTED,
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontSize: 11,
+                    fontWeight: isSelected ? 700 : 400,
+                    cursor: "pointer",
+                    textAlign: "left",
+                    transition: "all 0.2s ease",
                   }}
                 >
                   <span
                     style={{
-                      fontFamily: "'JetBrains Mono', monospace",
-                      fontSize: 7,
+                      fontSize: 8,
                       fontWeight: 700,
-                      letterSpacing: "0.10em",
-                      color: active === item.id ? GOLD : FG_DIMMER,
-                      minWidth: 36,
-                      flexShrink: 0,
+                      letterSpacing: "0.1em",
+                      opacity: isSelected ? 1 : 0.6,
+                      color: isSelected ? GOLD : FG_DIMMER,
                     }}
                   >
                     {item.icon}
                   </span>
-                  <span
-                    style={{
-                      fontFamily: "Inter, system-ui, sans-serif",
-                      fontSize: 12,
-                      color: active === item.id ? FG_PRIMARY : FG_MUTED,
-                      fontWeight: active === item.id ? 600 : 400,
-                      lineHeight: 1.3,
-                    }}
-                  >
-                    {item.label}
-                  </span>
+                  <span>{item.label}</span>
                 </button>
-              </li>
-            ))}
-          </ul>
-
-          {/* Version pill */}
-          <div
-            style={{
-              marginTop: 32,
-              padding: "8px 10px",
-              borderRadius: 6,
-              border: `1px solid ${GOLD_DIM}`,
-              backgroundColor: "rgba(4,16,9,0.50)",
-            }}
-          >
-            <div
-              style={{
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: 8,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                color: GOLD_TEXT,
-                marginBottom: 4,
-              }}
-            >
-              Platform Version
-            </div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 14, fontWeight: 700, color: FG_PRIMARY }}>
-              v0.1.0
-            </div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: FG_DIMMER, marginTop: 2 }}>
-              Phase 2 -- Beta
-            </div>
-          </div>
-        </nav>
+              );
+            })}
+          </nav>
+        </aside>
 
         {/* ======== MAIN CONTENT ======== */}
         <main style={{ paddingTop: 32, paddingLeft: 40, paddingBottom: 64 }}>
@@ -765,34 +842,28 @@ export default function DocsPage() {
           <SectionHeading
             id="architecture-heading"
             overline="Section 01"
-            title="Architecture"
-            sub="End-to-end data flow from log ingestion to autonomous response."
+            title="3-Plane Architecture"
+            sub="Separation of Telemetry Data Plane, AI Reasoning Plane, and Response Control Plane."
           />
           <GoldRule />
 
           <BodyText>
-            The AI-SOC platform is a layered autonomous security operations stack built on
-            FastAPI, LangGraph, and a Next.js 15 operator console. Raw events ingested by
-            Wazuh agents are forwarded to the FastAPI gateway, enriched through a Splunk
-            lookup pipeline, and then handed to a stateful LangGraph multi-agent graph
-            for triage, scoring, and remediation proposal.
+            The AI-SOC platform strictly separates telemetry processing, generative AI reasoning, and response
+            execution into three discrete planes. The LLM/agent layer operates exclusively in an advisory capacity
+            and is never the security boundary authorizing destructive or disruptive actions.
           </BodyText>
           <BodyText>
-            All agent decisions and incident records are persisted in Postgres via async
-            SQLAlchemy, enabling full audit trails and post-mortem playback. The Next.js
-            dashboard polls the REST API for live alert hydration and renders a real-time
-            command console for human operators.
+            Raw events ingested from Wazuh, EDR, and network flow sensors are normalized against a canonical schema
+            and stamped with source integrity metadata. LangGraph multi-agent nodes synthesize context and propose
+            structured <InlineCode>ActionProposal</InlineCode> objects. A deterministic policy engine and Action Broker
+            govern authorization, approval, time-bounded execution, and compensating rollback.
           </BodyText>
 
           <ArchDiagram />
 
-          <InfoCard colour="#60a5fa" label="Design Principle">
-            Every component boundary is a well-typed REST or async DB contract.
-            No component holds global mutable state outside its own service boundary.
-          </InfoCard>
-          <InfoCard colour={GOLD} label="Golden Ratio Scaling">
-            API gateway threads, agent pool sizes, and Postgres connection pools are
-            tuned to Fibonacci multiples (8, 13, 21) to distribute load harmonically.
+          <InfoCard colour="#60a5fa" label="Architectural Boundary">
+            Every component boundary is governed by strict typed schemas. Agents never hold long-lived administrative
+            credentials; the dedicated Action Broker executes approved proposals using ephemeral, scoped credentials.
           </InfoCard>
 
           {/* == Agent Orchestration == */}
@@ -800,16 +871,15 @@ export default function DocsPage() {
           <SectionHeading
             id="agent-orchestration-heading"
             overline="Section 02"
-            title="Agent Orchestration"
-            sub="LangGraph stateful multi-agent graph -- triage, enrich, decide."
+            title="Agent Orchestration & Reasoning"
+            sub="LangGraph multi-agent graph with bounded tools and evidence citations."
           />
           <GoldRule />
 
           <BodyText>
-            The orchestration layer is a LangGraph <InlineCode>StateGraph</InlineCode> with
-            four specialised nodes wired together via conditional edges. Each node receives
-            the shared <InlineCode>SOCState</InlineCode> TypedDict, appends its output, and
-            passes control downstream.
+            The orchestration mesh uses LangGraph to coordinate specialized agents. Generative reasoning is reserved
+            for tasks where language inference adds real value (evidence synthesis, hypothesis generation, and ATT&CK
+            candidate mapping), while parsing, correlation, and policy evaluation remain deterministic.
           </BodyText>
 
           {/* Agent flow */}
@@ -833,14 +903,15 @@ export default function DocsPage() {
                 marginBottom: 18,
               }}
             >
-              LangGraph Node Sequence
+              LangGraph Multi-Agent Node Sequence
             </div>
             <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 0 }}>
               {[
-                { name: "log_parser",  desc: "Extract fields" },
-                { name: "ip_enricher", desc: "GeoIP + WHOIS"  },
-                { name: "scorer",      desc: "Risk scoring"   },
-                { name: "responder",   desc: "Propose action" },
+                { name: "Normalizer",  desc: "Canonical Schema" },
+                { name: "Context Agent", desc: "Authoritative SIEM" },
+                { name: "Analyst Agent", desc: "ATT&CK + Synthesis" },
+                { name: "Response Agent", desc: "ActionProposal" },
+                { name: "Policy Gate", desc: "Deterministic Auth" },
               ].map((node, i, arr) => (
                 <div key={node.name} style={{ display: "flex", alignItems: "center" }}>
                   <div
@@ -870,76 +941,89 @@ export default function DocsPage() {
             </div>
           </div>
 
-          <BodyText>
-            Compile the graph once at startup and invoke via 
-            <InlineCode>soc_graph.invoke(state)</InlineCode>. IO-bound enrichment
-            inside nodes can be offloaded to 
-            <InlineCode>asyncio.run_in_executor</InlineCode>.
-          </BodyText>
-
-          {/* == Log Ingestion (Wazuh) == */}
-          <SectionAnchor id="log-ingestion" />
+          {/* == ActionSpec & Policy == */}
+          <SectionAnchor id="actionspec-contract" />
           <SectionHeading
-            id="log-ingestion-heading"
+            id="actionspec-contract-heading"
             overline="Section 03"
-            title="Log Ingestion (Wazuh)"
-            sub="Syslog forwarder -> FastAPI receiver -> normalised incident schema."
+            title="ActionSpec Contract & Policy Broker"
+            sub="Typed action schema, blast-radius calculation, and auto-rollback."
           />
           <GoldRule />
 
           <BodyText>
-            Wazuh agents emit JSON-formatted syslog events over UDP/514. A lightweight
-            Python forwarder (<InlineCode>log_forwarder.py</InlineCode>) reads the stream,
-            stamps a UTC timestamp, and POSTs each payload to 
-            <InlineCode>/api/alerts/analyze</InlineCode>.
+            The <InlineCode>ActionSpec</InlineCode> contract is the strict formal interface between AI agents, the policy
+            engine, and execution brokers. Agents cannot generate arbitrary commands or shell strings; they select from an
+            allowlisted action catalog and must provide evidence references, expected effects, blast radius, and rollback definitions.
           </BodyText>
 
-          <CodeBlock language="Python -- Wazuh Log Payload" code={WAZUH_CODE} />
+          <CodeBlock language="TypeScript / Pydantic -- ActionSpec Contract" code={ACTIONSPEC_CODE} />
 
-          <InfoCard colour="#34d399" label="Throughput Note">
-            The forwarder batches events up to 50 ms before flushing, sustaining
-            approximately 1,200 events/sec on a single core with the async FastAPI endpoint.
-          </InfoCard>
+          {/* == Autonomy Tiers == */}
+          <SectionAnchor id="autonomy-tiers" />
+          <SectionHeading
+            id="autonomy-tiers-heading"
+            overline="Section 04"
+            title="Autonomy Tiers & Release Gates"
+            sub="Risk-calibrated authorization levels from observation to disruptive response."
+          />
+          <GoldRule />
+
+          <BodyText>
+            Remediation actions are categorized into 5 Autonomy Tiers to ensure disruptive operations are never executed
+            without appropriate policy evaluation and human oversight.
+          </BodyText>
+
+          <AutonomyTiersTable />
+
+          {/* == Secure Ingestion == */}
+          <SectionAnchor id="log-ingestion" />
+          <SectionHeading
+            id="log-ingestion-heading"
+            overline="Section 05"
+            title="Secure Ingestion & Transport"
+            sub="Authenticated TLS transport, durable buffering, idempotency, and backpressure."
+          />
+          <GoldRule />
+
+          <BodyText>
+            Production ingestion requires secure, authenticated transport with idempotency keys and store-and-forward buffering.
+            Inbound events are validated against strict Pydantic schemas, and malformed inputs are quarantined into dead-letter queues.
+          </BodyText>
+
+          <CodeBlock language="Python -- Secure Ingestion Forwarder" code={WAZUH_CODE} />
 
           {/* == Splunk Enrichment == */}
           <SectionAnchor id="splunk-enrichment" />
           <SectionHeading
             id="splunk-enrichment-heading"
-            overline="Section 04"
-            title="Splunk Enrichment"
-            sub="Contextual threat intelligence layered on top of raw events."
+            overline="Section 06"
+            title="Splunk Enrichment & Parameterized Queries"
+            sub="Canonical IP validation eliminating search string injection."
           />
           <GoldRule />
 
           <BodyText>
-            After initial parsing, each event is dispatched to the 
-            <InlineCode>ip_enricher</InlineCode> LangGraph node. This node queries
-            Splunk Enterprise Security via the REST API to retrieve existing notable events,
-            asset context, and threat-intelligence matches for the source IP.
+            Enrichment connectors parse and strictly validate all input parameters (such as IP addresses and domain hashes)
+            before querying external SIEMs or threat-intelligence feeds. Parameterized query construction prevents search injection attacks.
           </BodyText>
 
-          <CodeBlock language="Python -- Splunk REST Query" code={SPLUNK_CODE} />
-
-          <InfoCard colour={GOLD} label="Planned Integration">
-            The Splunk enrichment node is scaffolded but requires a live Splunk ES
-            instance. Mock enrichment context is returned during local development.
-          </InfoCard>
+          <CodeBlock language="Python -- Safe Parameterized Splunk Query" code={SPLUNK_CODE} />
 
           {/* == Operator Playbooks == */}
           <SectionAnchor id="operator-playbooks" />
           <SectionHeading
             id="operator-playbooks-heading"
-            overline="Section 05"
-            title="Operator Playbooks"
-            sub="Structured response runbooks for common incident categories."
+            overline="Section 07"
+            title="Policy-Governed Operator Playbooks"
+            sub="PB-001 Brute Force SSH Response: Policy-first, human-in-the-loop remediation."
           />
           <GoldRule />
 
           <BodyText>
-            Playbooks are deterministic response procedures triggered automatically by
-            the <InlineCode>responder</InlineCode> node when confidence exceeds a
-            configurable threshold, or manually by an operator via the Command Dashboard.
-            Each playbook is a versioned YAML document compiled to a typed Python dataclass.
+            Playbooks define end-to-end response runbooks. In accordance with safety release gates, disruptive actions
+            (such as perimeter firewall blocks) require explicit operator review or policy approval <em>before</em> any
+            firewall rules are executed. All containment actions carry a time-to-live (1-hour TTL) and an automated rollback plan.
           </BodyText>
 
           {/* Playbook table */}
@@ -963,12 +1047,12 @@ export default function DocsPage() {
                 marginBottom: 16,
               }}
             >
-              PB-001 -- Brute Force SSH Response
+              PB-001 -- Brute Force SSH Response (Policy-Gated v2.0)
             </div>
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "32px 1fr 120px 90px",
+                gridTemplateColumns: "32px 1fr 140px 110px",
                 gap: 12,
                 padding: "6px 14px",
                 marginBottom: 6,
@@ -990,20 +1074,20 @@ export default function DocsPage() {
                 </span>
               ))}
             </div>
-            <PlaybookStep step={1} action="Verify alert via Splunk correlation"          owner="ai_scorer"    status="automated" />
-            <PlaybookStep step={2} action="Block source IP at perimeter firewall"         owner="ai_responder" status="automated" />
-            <PlaybookStep step={3} action="Notify on-call operator via PagerDuty"         owner="orchestrator" status="automated" />
-            <PlaybookStep step={4} action="Operator reviews block decision and approves"   owner="Human SOC"    status="manual"    />
-            <PlaybookStep step={5} action="Post-incident review and IOC export to MISP"   owner="Analyst"      status="hybrid"    />
+            <PlaybookStep step={1} action="Verify alert via Splunk correlation & host context" owner="ai_scorer" status="automated" />
+            <PlaybookStep step={2} action="Enrich source reputation & generate ActionProposal with 1h TTL" owner="context_agent" status="automated" />
+            <PlaybookStep step={3} action="Deterministic Policy Decision & Await Analyst Approval" owner="Policy / Human SOC" status="manual" />
+            <PlaybookStep step={4} action="Execute perimeter firewall block via Action Broker (1-hour TTL)" owner="action_broker" status="hybrid" />
+            <PlaybookStep step={5} action="Verify block enforcement & notify on-call responders" owner="orchestrator" status="automated" />
+            <PlaybookStep step={6} action="Post-incident review, auto-rollback after TTL & IOC export" owner="Analyst" status="hybrid" />
           </div>
 
-          <CodeBlock language="YAML -- Playbook Definition" code={PLAYBOOK_CODE} />
+          <CodeBlock language="YAML -- Policy-Gated Playbook Definition" code={PLAYBOOK_CODE} />
 
-          <InfoCard colour="#f87171" label="Caution">
-            Playbooks with <InlineCode>automated: true</InlineCode> firewall steps execute
-            without operator confirmation. Calibrate 
-            <InlineCode>confidence_threshold</InlineCode> carefully before enabling in
-            production environments.
+          <InfoCard colour="#34d399" label="Human-in-the-Loop Guarantee">
+            Disruptive actions (firewall block, endpoint isolation) strictly require policy evaluation and analyst approval
+            prior to execution. The LLM only proposes actions; the deterministic policy service authorizes, and the Action Broker
+            executes with scoped credentials and auto-rollback TTL.
           </InfoCard>
 
         </main>

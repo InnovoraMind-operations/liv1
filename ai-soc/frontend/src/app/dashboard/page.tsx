@@ -19,9 +19,9 @@ import { redirect } from "next/navigation";
 export const metadata: Metadata = {
   title: "AI-SOC | Security Operations Center — Phase 1",
   description:
-    "AI-powered Security Operations Center dashboard. Real-time threat monitoring, incident triage, and autonomous remediation powered by multi-agent orchestration.",
+    "AI-powered Security Operations Center dashboard. Real-time threat monitoring, incident triage, and policy-governed remediation powered by multi-agent orchestration.",
   keywords: [
-    "SOC", "SIEM", "security operations", "threat detection", "AI security", "incident response",
+    "SOC", "SIEM", "security operations", "threat detection", "AI security", "incident response", "ActionSpec",
   ],
 };
 
@@ -73,16 +73,16 @@ function HeaderSkeleton() {
 }
 
 // ---------------------------------------------------------------------------
-// Metrics Bar
+// Metrics Bar — Calibrated Prototype Measurements
 // ---------------------------------------------------------------------------
 
 function MetricsBar() {
   const metrics = [
-    { label: "MTTR",      value: "—", unit: "min",    note: "Mean Time to Respond"    },
-    { label: "FP RATE",   value: "—", unit: "%",      note: "False Positive Rate"     },
-    { label: "INGESTED",  value: "—", unit: "ev/s",   note: "Events per Second"       },
-    { label: "AGENTS",    value: "0", unit: "active", note: "Autonomous Agents"        },
-    { label: "PLAYBOOKS", value: "0", unit: "loaded", note: "Remediation Playbooks"   },
+    { label: "TARGET MTTR",   value: "< 15", unit: "min",    note: "Pilot Goal (Target vs Measured)" },
+    { label: "POLICY GATES",  value: "100",  unit: "%",      note: "Disruptive Action Approval"      },
+    { label: "INGESTION",     value: "TLS",  unit: "durable",note: "Authenticated Transport"         },
+    { label: "AUTONOMY",      value: "T0-T3",unit: "tiers",  note: "Calibrated Risk Levels"          },
+    { label: "PLAYBOOKS",     value: "PB-001",unit: "active",note: "SSH Containment (1h TTL)"        },
   ];
 
   return (
@@ -103,11 +103,11 @@ function MetricsBar() {
             <span className="font-mono text-xl font-bold" style={{ color: "#F5F0E8" }}>
               {value}
             </span>
-            <span className="font-mono text-[10px]" style={{ color: "#3D5C46" }}>
+            <span className="font-mono text-[10px]" style={{ color: "#D4AF37" }}>
               {unit}
             </span>
           </div>
-          <p className="mt-0.5 text-[10px]" style={{ color: "#2A4535" }}>
+          <p className="mt-0.5 text-[10px]" style={{ color: "#8A9E8E" }}>
             {note}
           </p>
         </div>
@@ -117,7 +117,7 @@ function MetricsBar() {
 }
 
 // ---------------------------------------------------------------------------
-// Page
+// Page Component
 // ---------------------------------------------------------------------------
 
 export default async function DashboardPage() {
@@ -138,6 +138,27 @@ export default async function DashboardPage() {
         <HeaderStatusBar />
       </Suspense>
 
+      {/* Sandbox Simulation Environment Indicator */}
+      <div
+        className="border-b px-6 py-2 backdrop-blur-sm"
+        style={{
+          backgroundColor: "rgba(212,175,55,0.06)",
+          borderColor: "rgba(212,175,55,0.25)",
+        }}
+      >
+        <div className="mx-auto flex max-w-screen-2xl items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="inline-block h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
+            <span className="font-mono text-[10px] font-bold tracking-wider text-amber-300 uppercase">
+              SANDBOX SIMULATION ENVIRONMENT · TENANT: ACME-CORP · ISOLATION ACTIVE
+            </span>
+          </div>
+          <span className="font-mono text-[9px] text-stone-400">
+            ActionSpec Policy Engine v3.0 · Auto-Rollback Enabled (3600s TTL)
+          </span>
+        </div>
+      </div>
+
       {/* Main content */}
       <main className="mx-auto max-w-screen-2xl px-6 py-6">
 
@@ -155,17 +176,17 @@ export default async function DashboardPage() {
                 className="font-mono text-[10px] uppercase tracking-widest"
                 style={{ color: "rgba(212,175,55,0.6)" }}
               >
-                Security Operations
+                Security Operations Command
               </span>
             </div>
             <h1
               className="mt-1 font-mono text-2xl font-bold tracking-tight"
               style={{ color: "#F5F0E8" }}
             >
-              Command Dashboard
+              Operator Command Dashboard
             </h1>
             <p className="mt-0.5 font-mono text-xs" style={{ color: "#3D5C46" }}>
-              Phase 1 — Foundational Intelligence Layer &nbsp;·&nbsp; Real-time Alert Monitoring
+              Multi-Agent Triage · ActionSpec Policy Gate · Human-in-the-Loop Authorization
             </p>
           </div>
 
@@ -197,7 +218,7 @@ export default async function DashboardPage() {
         >
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="font-mono text-[10px]" style={{ color: "#2A4535" }}>
-              AI-SOC Core Engine v0.1.0 &nbsp;·&nbsp; Phase 1: Foundation &nbsp;·&nbsp; All data mock
+              AI-SOC Core Engine v0.1.0 &nbsp;·&nbsp; Phase 1 Foundation &nbsp;·&nbsp; ActionSpec v2.4
             </p>
             <p className="font-mono text-[10px]" style={{ color: "#2A4535" }}>
               Next.js 15 App Router &nbsp;·&nbsp; FastAPI &nbsp;·&nbsp; Pydantic v2

@@ -87,8 +87,8 @@ export default async function Navbar() {
             className="flex h-8 w-8 items-center justify-center rounded ring-1 transition-all duration-300 ease-in-out group-hover:shadow-[0_0_14px_-2px_rgba(212,175,55,0.45)]"
             style={{
               backgroundColor: "rgba(212,175,55,0.08)",
-              ringColor: "rgba(212,175,55,0.25)",
-              boxShadow: undefined,
+              borderColor: "rgba(212,175,55,0.25)",
+              boxShadow: "0 0 14px -2px rgba(212,175,55,0.25)",
             }}
           >
             {/* Shield-check icon */}

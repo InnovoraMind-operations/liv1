@@ -8,15 +8,16 @@ backgroundColor: #f8f9fa
 # AI-SOC
 ## Autonomous Security Operations Center
 ### Next-Generation Threat Detection & Response Architecture
+#### InnovoraMind LLC · Architectural & Engineering Review Edition
 
 ---
 
 ## Executive Summary
 
-- **The Vision**: Revolutionize security operations by transitioning from manual triage to AI-driven autonomy.
-- **The Mission**: Drastically reduce Mean Time to Detect (MTTD) and Mean Time to Respond (MTTR).
-- **The Approach**: A highly scalable, event-driven architecture paired with a Multi-Agent LLM orchestration engine to automate threat hunting, analysis, and remediation.
-- **The Result**: Human analysts focus on strategic decisions (Human-in-the-Loop) while AI handles alert fatigue and correlation.
+- **The Vision**: Revolutionize security operations by transitioning from manual triage to AI-assisted and policy-governed autonomy.
+- **The Mission**: Designed to reduce analyst triage and response time; quantify MTTR and MTTD impact through pilot measurements.
+- **The Approach**: A highly scalable, event-driven architecture paired with a bounded Multi-Agent LLM orchestration engine to automate threat correlation, hypothesis generation, and proposed remediation.
+- **The Result**: Human analysts focus on strategic decisions (Human-in-the-Loop) while deterministic policy gates and automated action brokers safely execute time-bounded containment.
 
 ---
 
@@ -25,157 +26,178 @@ backgroundColor: #f8f9fa
 - **Alert Fatigue**: Tier 1 analysts are overwhelmed by massive volumes of false positives and noisy telemetry.
 - **Manual Triage Bottlenecks**: Correlating logs across disparate systems manually leads to unacceptable response delays.
 - **Cognitive Overload & Burnout**: High turnover rates due to repetitive, low-level investigative tasks.
-- **Fragmented Tooling**: Lack of unified platforms that seamlessly connect detection to automated remediation playbooks.
+- **Fragmented Tooling**: Lack of unified platforms that seamlessly connect detection to policy-authorized remediation playbooks.
 
 ---
 
 ## The Solution: AI-SOC
 
-A fully autonomous, scalable SOC platform designed for modern threat landscapes.
+A scalable, policy-governed SOC platform designed for modern threat landscapes.
 
 **Core Pillars:**
-1. **Real-Time Telemetry**: High-throughput ingestion of system and network events.
-2. **AI-Powered Analysis**: Multi-agent orchestration for context enrichment and threat validation.
-3. **Automated Playbooks**: Dynamic remediation strategies aligned with industry frameworks.
-4. **Command & Control**: A modern, low-latency "Single Pane of Glass" dashboard for security leadership and operators.
+1. **High-Throughput Telemetry**: Ingestion across integrated telemetry sources and supported environments.
+2. **AI-Assisted Reasoning**: Multi-agent orchestration for context enrichment, hypothesis generation, and evidence synthesis.
+3. **Policy-Governed Playbooks**: Constrained remediation proposals executed only via deterministic action authorization.
+4. **Operator Command Center**: Low-latency single pane of glass for human-in-the-loop investigation and approval.
 
 ---
 
-## High-Level System Architecture
+## Three-Plane System Architecture
 
-A modular, microservices-inspired monorepo architecture:
+AI-SOC strictly separates the **Data Plane**, **AI Reasoning Plane**, and **Response Control Plane**:
 
-- **Frontend (Presentation)**: Next.js 15 (App Router), React, Tailwind CSS. 
-- **Backend (Core Engine)**: Python 3.11+, FastAPI, Pydantic v2. Built for asynchronous, high-concurrency API performance.
-- **Data Persistence**: PostgreSQL & TimescaleDB. Optimized for high-volume time-series event data and relational state.
-- **Orchestration (AI)**: LangGraph. Stateful, multi-actor LLM workflows.
-- **Sensors (Edge)**: Native Windows Event Tailers and Network Packet Sniffers.
+```
+[Telemetry Sources: Wazuh / EDR / Identity / Syslog]
+                     │ (Authenticated + TLS)
+                     ▼
+[Data Plane]         Durable Ingestion Bus ──▶ Normalizer ──▶ Canonical Incident Schema
+                                                                      │
+                                     ┌────────────────────────────────┤
+                                     ▼                                ▼
+[AI Reasoning Plane]         Authoritative SIEM/TI Connectors    LangGraph Multi-Agent Mesh
+                             (Splunk / VirusTotal / Asset DB)    (Triage, Context, Response)
+                                                                      │
+                                                                      ▼ (Structured ActionProposal)
+[Response Control Plane]                                         Deterministic Policy Engine
+                                                                      │ (Require Approval / Deny / Allow)
+                                                                      ▼
+                                                                 HITL Analyst Approval Gate
+                                                                      │
+                                                                      ▼
+                                                                 Action Broker & Executor
+                                                                 (Firewall / EDR / IAM / ITSM)
+                                                                 [Time-Bounded TTL + Rollback]
+
+[Cross-Cutting Services] Identity & RBAC │ Secrets/KMS │ Tenant Isolation │ Immutable Audit │ Observability
+```
 
 ---
 
 ## Deep Dive: The Operator Dashboard
 
-The presentation layer designed for minimal cognitive load:
+The presentation layer designed for minimal cognitive load and rigorous operational safety:
 
-- **Purpose-Built UI**: Next.js 15 App Router providing a seamless, SPA-like experience.
-- **Real-Time Telemetry**: Alert Queues with instant visual severity indicators and backend health monitoring.
-- **Capabilities Matrix**: Dynamic visualization of active sensors and available AI modules.
-- **Action-Oriented**: Built strictly for Human-in-the-Loop (HITL) interventions, allowing analysts to quickly approve AI-recommended remediation paths.
+- **Purpose-Built UI**: Next.js 15 App Router providing a seamless, low-latency command experience.
+- **Real-Time Telemetry & Health**: Alert Queues with visual severity indicators, distinguishing runtime service health from feature readiness.
+- **Evidence & Provenance Timeline**: Chronological raw/normalized evidence, source provenance, pivots, and model notes.
+- **Action-Oriented HITL**: Built strictly for Human-in-the-Loop interventions, allowing analysts to review `ActionProposal` blast radius and TTL before approving containment.
+- **Persistent Sandbox Labeling**: Clear simulation and sandbox banners so test events are never confused with live production changes.
 
 ---
 
-## Deep Dive: The Core Engine
+## Deep Dive: The Core Engine & Data Plane
 
 The high-performance API nerve center driving the platform:
 
-- **Asynchronous Processing**: Python FastAPI designed specifically for non-blocking I/O during massive log ingestion.
-- **Strict Data Integrity**: Pydantic v2 schemas validate all inbound sensor traffic, immediately dropping malformed or compromised payloads.
-- **Scalable Data Layer**: Prepared for TimescaleDB integration, allowing hyper-efficient querying of time-series event data by the AI agents.
+- **Asynchronous Processing**: Python FastAPI designed specifically for non-blocking I/O during high-throughput log ingestion.
+- **Strict Data Integrity**: Pydantic v2 schemas validate all inbound sensor traffic, validating payloads against typed schemas and rejecting/quarantining malformed input.
+- **Optimized Data Layer**: PostgreSQL and TimescaleDB integration, optimized for time-series querying by human operators and analytical services.
+- **Durable Event Pipeline**: Designed for buffered transport, idempotency keys, deduplication, and backpressure handling.
 
 ---
 
-## Deep Dive: Multi-Agent Orchestration
+## Deep Dive: Multi-Agent AI & ActionSpec Contract
 
-The "Brain" of the AI-SOC, utilizing **LangGraph** for stateful AI workflows:
+The "Brain" of the AI-SOC converts reasoning into constrained, typed proposals:
 
-- **Triage Agent**: Ingests raw telemetry, normalizes data, and filters out known noise.
-- **Context Agent**: Queries historical databases and external Threat Intel feeds to enrich the alert.
-- **Response Agent**: Maps the validated threat to MITRE ATT&CK TTPs and drafts a remediation playbook.
-- **Human-in-the-Loop Gateway**: High-impact remediations pause the AI, awaiting explicit analyst approval via the dashboard.
-
----
-
-## Current State: Phase 1 Foundation
-
-We have successfully established the foundational platform scaffold:
-
-- **Robust Backend Engine**: FastAPI server with core endpoint schemas (`/api/alerts`, `/api/health`).
-- **Modern UI Framework**: Next.js 15 dashboard featuring real-time Alert Queues and a Backend Health Monitor.
-- **Infrastructure as Code**: Dockerized foundational data layer (`docker-compose.yml` with PostgreSQL 16).
-- **Developer Experience**: Streamlined monorepo structure ready for rapid scaling and team onboarding.
+- **Triage Node**: Ingests normalized telemetry, summarizes events with citations, and filters out noise.
+- **Context Agent**: Queries authoritative SIEM (Splunk) and threat intelligence feeds to build verified evidence bundles.
+- **Response Agent**: Maps validated threats to MITRE ATT&CK TTPs and generates a structured `ActionProposal`.
+- **Policy & Action Broker Boundary**:
+  - *The LLM only proposes actions; it NEVER holds direct administrative credentials or executes commands.*
+  - The deterministic **Policy Engine** assesses blast radius, asset criticality, and requires explicit analyst approval for disruptive actions (Tier 3/4).
+  - The **Action Broker** executes approved actions with scoped short-lived credentials and a 1-hour auto-rollback TTL.
 
 ---
 
-## Active Monitoring: Windows Log Ingestion
+## Endpoint & Network Telemetry Layer
 
-Extending visibility directly to the endpoint:
+Corroborating host and network telemetry to strengthen investigation:
 
-- **Continuous Collection**: Deployment of lightweight edge agents tailing Windows Event Logs (Security, System, Application) in real-time.
-- **Targeted Detection**: Focused on identifying lateral movement, privilege escalation, and anomalous PowerShell executions.
-- **Contextual Depth**: Feeds rich host-level telemetry directly into the AI Context Agent for immediate correlation against known IOCs.
-
----
-
-## Active Monitoring: Network Packet Sniffing
-
-Securing the perimeter and internal lateral pathways:
-
-- **Comprehensive Visibility**: Passive capture and analysis of network traffic at the packet level.
-- **Behavioral Analysis**: Identifying command and control (C2) beaconing, data exfiltration, and anomalous DNS requests.
-- **Zero-Trust Validation**: Detects threats that successfully bypass endpoint controls, providing a secondary layer of irrefutable evidence.
+- **Windows Event Log Ingestion (Roadmap/Dev)**: Lightweight edge collectors tailing Security (4625, 4672, 4688), System, and Application logs with identity context.
+- **Network Telemetry & Flow Analytics (Roadmap/Dev)**: Flow/metadata analytics (Zeek/NetFlow) paired with selective packet capture for C2 beaconing and exfiltration corroboration.
+- **Corroborating Evidence**: Network and host observations are correlated in the evidence bundle to validate ATT&CK candidate retrieval without unprovable "irrefutable" claims.
 
 ---
 
-## Third-Party Integration: API Key Architecture
+## Enterprise Identity & Extensibility (Roadmap)
 
-Enabling enterprise extensibility and ecosystem integration:
+Enabling enterprise trust and ecosystem integration:
 
-- **Secure Access**: Robust API Key generation and lifecycle management for programmatic access to the AI-SOC engine.
-- **Ecosystem Synergy**: Allows third-party SIEMs, custom scripts, and downstream ITSM tools (like ServiceNow/Jira) to ingest or query telemetry.
-- **Granular Security**: Fine-grained Role-Based Access Control (RBAC) enforced at the API layer, strictly limiting the scope of every generated key.
+- **Enterprise Identity**: OIDC/SAML Single Sign-On, phishing-resistant MFA, Role-Based Access Control (RBAC), and step-up authentication for privileged actions.
+- **API Key Architecture (Planned)**: Secure API key lifecycle management including scoping, hashing, storage, rotation, rate limiting, and audit logging before public exposure.
+- **Ecosystem Connectors**: Standardized connector adapters with caching, timeouts, circuit breakers, and degraded-mode resilience for third-party SIEMs and ITSM tools.
+
+---
+
+## Current Build vs. Roadmap Matrix
+
+Explicit mapping of demonstrated capabilities versus staged/planned features:
+
+| Capability / Area | Status | Evidence in Build | Target Horizon |
+|:---|:---|:---|:---|
+| **Dashboard Shell & UI** | **Demonstrated** | Next.js 15 App Router, Navigation, Executive Dark Theme | Current (v0.1.0) |
+| **REST API Core** | **Demonstrated** | FastAPI backend, Pydantic schemas, Health telemetry | Current (v0.1.0) |
+| **ActionSpec & Policy Schemas** | **Demonstrated** | Structured `ActionProposal`, `PolicyDecision`, `ExecutionResult` | Current (v0.1.0) |
+| **Alert Queue & Evidence View** | **Beta / Staging** | Seeded synthetic incidents, ATT&CK mapping, audit timeline | Current (v0.1.0) |
+| **Multi-Agent LangGraph Core** | **Development** | Node state graphs, Triage & Context agent workflows | 61–90 days |
+| **Action Broker & HITL Approval** | **Staging / Beta** | Policy decision engine, analyst approval gate, TTL rollback | 3–6 months |
+| **Windows & Network Sensors** | **Development** | Event tailing and flow collector prototypes | 31–60 days |
+| **Enterprise SSO & API Keys** | **Planned** | OIDC/SAML integration, scoped API key lifecycle | 3–6 months |
 
 ---
 
 ## Commercialization: Deployment Models
 
-Flexible architectures to meet strict compliance and operational needs:
+Flexible architectures to meet strict compliance and operational requirements:
 
-- **SaaS / Managed Cloud**: Multi-tenant, turn-key deployment with zero infrastructure overhead. Ideal for rapid onboarding.
-- **On-Premise / Air-Gapped**: Dedicated Kubernetes/Appliance deployments for highly regulated environments (Gov/FinTech) requiring strict data sovereignty.
-- **Hybrid Edge**: Cloud control plane with localized edge processing nodes for bandwidth-constrained environments.
-
----
-
-## Commercialization: Subscription Tiers
-
-Scalable payment plans tailored to organizational maturity:
-
-- **Tier 1 (Starter)**: Foundational log ingestion, basic AI triage rules, and standardized API access.
-- **Tier 2 (Enterprise)**: Advanced LLM threat hunting, custom remediation playbooks, and extended TimescaleDB data retention.
-- **Tier 3 (MSSP / White-Label)**: Multi-tenant management portal, infinite cloud scale, dedicated support, and custom branding options.
+- **SaaS / Managed Cloud**: Multi-tenant cloud with tenant ID isolation, row/partition security, per-tenant keys/quotas, and isolated agent memory.
+- **On-Premise / Air-Gapped**: Self-contained appliance deployments with offline-capable models, local threat-intel bundles, and zero mandatory cloud callback.
+- **Hybrid Edge**: Localized edge collection and store-and-forward processing with mutual TLS device authentication.
 
 ---
 
 ## Strategic Roadmap & Phased Execution
 
-- ✅ **Phase 1**: Foundation - REST API Core & Next.js Dashboard.
-- 🔜 **Phase 2**: Identity & API - API Key Integration, OAuth2, and Database provisioning.
-- 🔜 **Phase 3**: The AI Brain - Multi-Agent Core deployment (LangGraph).
-- 🔜 **Phase 4**: Sensor Rollout - Windows Event Tailer + Network Packet Sniffing deployment.
-- 🔜 **Phase 5**: Commercialization - Billing integration, Deployment packaging, and Automated Playbooks.
+Reordered around cybersecurity safety, verification, and release gates:
+
+- 🛡️ **Horizon 1 (0–30 Days): Product & Security Foundation**
+  - Reconcile capability registry; canonical event schemas; ActionSpec contract; policy approval gate; fix PB-001 approval order.
+- 🔄 **Horizon 2 (31–60 Days): Reliable Evidence Pipeline**
+  - Durable event bus; normalization & deduplication; connector abstractions (Splunk/Wazuh); OpenTelemetry tracing.
+- 🤖 **Horizon 3 (61–90 Days): Bounded Agentic Assistance**
+  - Read-only Analyst Agent; evidence verifier; model gateway with cost/token budgets; OWASP/NIST AI test suite; shadow-mode action proposals.
+- ⚖️ **Horizon 4 (3–6 Months): Controlled Response Pilot**
+  - HITL approval service; Action Broker with scoped credentials and auto-rollback TTL; Enterprise SSO/MFA; tenant isolation pilot.
+- 🏢 **Horizon 5 (6–12 Months): Enterprise Hardening & Commercialization**
+  - HA/DR, air-gap packaging, SOC 2 / ISO 27001 evidence, SBOM/signing, agent red-teaming, and design-partner ROI analytics.
 
 ---
 
-## Enterprise Scalability & Security
+## Autonomy Tiers & Action Governance
 
-- **Asynchronous by Default**: `uvloop` ensures the backend easily handles thousands of concurrent sensor streams.
-- **Time-Series Optimization**: TimescaleDB allows massive horizontal scaling while maintaining fast AI queries.
-- **Zero-Trust Ready**: Strict API boundaries and RBAC between the UI, API Keys, and Edge Sensors.
+Strict risk-calibrated authorization matrix for all platform actions:
+
+- **Tier 0 – Observe**: Summarize evidence, ATT&CK mapping, case notes. *(Automatic; read-only)*
+- **Tier 1 – Administrative**: Create ticket, add tag, request enrichment, draft notification. *(Automatic when reversible)*
+- **Tier 2 – Bounded Containment**: Short-lived isolation of non-critical endpoint, low-blast-radius rule. *(Policy-governed with approval)*
+- **Tier 3 – Disruptive**: Perimeter firewall block, disable account, isolate critical server. *(Explicit Analyst Approval Required)*
+- **Tier 4 – Destructive / Irreversible**: Terminate infrastructure, wipe endpoint. *(Never LLM-only; strict dual control)*
 
 ---
 
 ## Conclusion & Next Steps
 
-**AI-SOC represents a paradigm shift from reactive log monitoring to proactive, autonomous cyber defense.**
+**AI-SOC represents a paradigm shift toward safe, evidence-grounded, policy-controlled security operations.**
 
-**Action Items for Leadership:**
-1. **Infrastructure**: Approve architecture and resource allocation for Windows Event and Packet Sniffer sensor deployment.
-2. **Security**: Finalize API key lifecycle policies and RBAC matrix.
-3. **Go-To-Market**: Select initial deployment model (SaaS vs. On-Prem) and approve payment gateway/billing provider integration.
+**Immediate Action Items:**
+1. **Safety Controls**: Enforce the deterministic policy gate before all disruptive remediation actions.
+2. **Architecture**: Implement the 3-plane model (Data, AI Reasoning, Response Control) and canonical ActionSpec contract.
+3. **Validation**: Execute end-to-end sandbox testing with complete evidence traceability and measurable MTTR/MTTD metrics.
 
 ---
 
 ## Q&A
 
 **Thank You.**
-*Autonomous Security Operations Center Team*
+*AI-SOC Engineering & Product Team · InnovoraMind LLC*
