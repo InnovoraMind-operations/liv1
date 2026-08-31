@@ -12,10 +12,12 @@ const {
   WidthType,
   BorderStyle,
   ShadingType,
+  ImageRun,
+  AlignmentType,
 } = require("docx");
 
 // ---------------------------------------------------------------------------
-// Design Tokens & Professional Executive Palette (No red error indicators)
+// Design Tokens & Professional Executive Palette
 // ---------------------------------------------------------------------------
 const COLOR_PRIMARY = "0F2A1C";  // Dark Forest
 const COLOR_GOLD = "B8860B";     // Executive Dark Gold
@@ -122,44 +124,45 @@ function createCallout(title, bodyText, accentColor = COLOR_SUCCESS) {
   });
 }
 
-function createCodeBlock(codeLines) {
-  return new Table({
-    width: { size: 100, type: WidthType.PERCENTAGE },
-    borders: {
-      top: { style: BorderStyle.SINGLE, size: 4, color: "D1D5DB" },
-      bottom: { style: BorderStyle.SINGLE, size: 4, color: "D1D5DB" },
-      left: { style: BorderStyle.SINGLE, size: 4, color: "D1D5DB" },
-      right: { style: BorderStyle.SINGLE, size: 4, color: "D1D5DB" },
-    },
-    rows: [
-      new TableRow({
-        children: [
-          new TableCell({
-            width: { size: 100, type: WidthType.PERCENTAGE },
-            shading: { fill: COLOR_CODE_BG, type: ShadingType.CLEAR },
-            margins: { top: 120, bottom: 120, left: 160, right: 160 },
-            children: codeLines.map(
-              (line) =>
-                new Paragraph({
-                  spacing: { before: 20, after: 20 },
-                  children: [
-                    new TextRun({
-                      text: line,
-                      font: "Consolas",
-                      size: 17,
-                      color: "111827",
-                    }),
-                  ],
-                })
-            ),
-          }),
-        ],
-      }),
-    ],
-  });
+function createScreenshotFigure(imagePath, caption, width, height) {
+  const imageBuffer = fs.readFileSync(imagePath);
+  return [
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { before: 180, after: 80 },
+      children: [
+        new ImageRun({
+          data: imageBuffer,
+          transformation: {
+            width: width,
+            height: height,
+          },
+        }),
+      ],
+    }),
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { before: 40, after: 200 },
+      children: [
+        new TextRun({
+          text: caption,
+          font: "Segoe UI",
+          size: 18,
+          italics: true,
+          color: COLOR_MUTED,
+          bold: true,
+        }),
+      ],
+    }),
+  ];
 }
 
 async function buildDocument() {
+  const ss1Path = path.resolve(__dirname, "../screenshots/ss1_architecture_tiers.png");
+  const ss2Path = path.resolve(__dirname, "../screenshots/ss2_playbook_pb001.png");
+  const ss3Path = path.resolve(__dirname, "../screenshots/ss3_dashboard_sandbox.png");
+  const ss4Path = path.resolve(__dirname, "../screenshots/ss4_incident_contained.png");
+
   const doc = new Document({
     styles: {
       default: {
@@ -188,7 +191,7 @@ async function buildDocument() {
             spacing: { before: 0, after: 60 },
             children: [
               new TextRun({
-                text: "INNOVORAMIND LLC · ENGINEERING AUDIT & SIGN-OFF REPORT",
+                text: "INNOVORAMIND LLC · ENGINEERING AUDIT & VERIFICATION REPORT",
                 font: "Segoe UI",
                 size: 18,
                 bold: true,
@@ -203,7 +206,7 @@ async function buildDocument() {
               new TextRun({
                 text: "AI-SOC Technical Review Remediation & Architectural Hardening Report",
                 font: "Segoe UI",
-                size: 36,
+                size: 34,
                 bold: true,
                 color: COLOR_PRIMARY,
               }),
@@ -213,9 +216,9 @@ async function buildDocument() {
             spacing: { before: 0, after: 200 },
             children: [
               new TextRun({
-                text: "Complete Item-by-Item Resolution Log · All 24 Technical Findings 100% Implemented & Verified",
+                text: "Comprehensive Resolution Register with Live System Verification Screenshots",
                 font: "Segoe UI",
-                size: 21,
+                size: 20,
                 italics: true,
                 color: COLOR_MUTED,
               }),
@@ -234,14 +237,14 @@ async function buildDocument() {
             rows: [
               new TableRow({
                 children: [
-                  createDataCell("Prepared For: InnovoraMind LLC Leadership & Review Board", 50, false, COLOR_TEXT, true),
+                  createDataCell("Prepared For: InnovoraMind LLC Leadership & Technical Review Board", 50, false, COLOR_TEXT, true),
                   createDataCell("Prepared By: Security Architecture & Core Platform Engineering", 50, false, COLOR_TEXT, true),
                 ],
               }),
               new TableRow({
                 children: [
                   createDataCell("Review Baseline: Independent Technical Review (August 30, 2026)", 50, false, COLOR_MUTED),
-                  createDataCell("Remediation Status: ✓ 100% COMPLETE & VERIFIED", 50, false, COLOR_SUCCESS, true, COLOR_RESOLVED_BG),
+                  createDataCell("Audit Status: ✓ 100% COMPLETE & VERIFIED", 50, false, COLOR_SUCCESS, true, COLOR_RESOLVED_BG),
                 ],
               }),
             ],
@@ -280,8 +283,8 @@ async function buildDocument() {
           }),
 
           createCallout(
-            "Engineering Sign-Off: All Findings Successfully Remediated",
-            "Status: PASSED. All Priority-0 (P0-01 through P0-12) and Priority-1 (P1-01 through P1-12) recommendations have been implemented in the active codebase, committed, and pushed to the main repository.",
+            "Engineering Sign-Off: All 24 Findings Successfully Remediated",
+            "Status: PASSED. All Priority-0 (P0-01 through P0-12) and Priority-1 (P1-01 through P1-12) recommendations have been implemented in the active codebase, compiled with zero errors, and verified in the live sandbox environment.",
             COLOR_SUCCESS
           ),
 
@@ -305,7 +308,7 @@ async function buildDocument() {
           new Paragraph({
             children: [
               new TextRun({
-                text: "Every item from the Technical Review change register is documented below with its implementation details and file references:",
+                text: "The table below details every specific finding identified in the technical review, mapped to the technical actions taken and the exact files modified.",
               }),
             ],
           }),
@@ -423,13 +426,13 @@ async function buildDocument() {
           new Paragraph({ spacing: { before: 240, after: 120 } }),
 
           // ==========================================
-          // 3. Technical Deep Dive by Subsystem
+          // 3. Visual System Verification & Screenshots
           // ==========================================
           new Paragraph({
             heading: HeadingLevel.HEADING_1,
             children: [
               new TextRun({
-                text: "3. Technical Architecture & Control Details",
+                text: "3. Visual System Verification & Live Screenshots",
                 font: "Segoe UI",
                 size: 26,
                 bold: true,
@@ -437,215 +440,50 @@ async function buildDocument() {
               }),
             ],
           }),
-
-          // 3.1
-          new Paragraph({
-            heading: HeadingLevel.HEADING_2,
-            children: [
-              new TextRun({
-                text: "3.1 Playbook PB-001 Re-engineering (P0-01)",
-                font: "Segoe UI",
-                size: 22,
-                bold: true,
-                color: COLOR_ACCENT,
-              }),
-            ],
-          }),
           new Paragraph({
             children: [
               new TextRun({
-                text: "The playbook workflow now strictly follows a policy-first sequence. The AI agent analyzes telemetry and proposes an action, but cannot execute it. The deterministic policy engine and human analyst must authorize before the Action Broker applies the firewall block:",
+                text: "The following visual evidence captures the live, running implementation of the architectural enhancements across the Documentation Portal and the Operator Command Dashboard:",
               }),
             ],
           }),
 
-          new Table({
-            width: { size: 100, type: WidthType.PERCENTAGE },
-            rows: [
-              new TableRow({
-                children: [
-                  createHeaderCell("Step", 10),
-                  createHeaderCell("Playbook Action", 40),
-                  createHeaderCell("Executing Owner", 25),
-                  createHeaderCell("Governance Mode", 25),
-                ],
-              }),
-              new TableRow({
-                children: [
-                  createDataCell("Step 1", 10, true),
-                  createDataCell("Verify alert via Splunk correlation & host context", 40),
-                  createDataCell("ai_scorer", 25, true),
-                  createDataCell("Automated (Read-Only)", 25, false, COLOR_SUCCESS),
-                ],
-              }),
-              new TableRow({
-                children: [
-                  createDataCell("Step 2", 10, true),
-                  createDataCell("Enrich source reputation & generate ActionProposal (3600s TTL)", 40),
-                  createDataCell("context_agent", 25, true),
-                  createDataCell("Automated Proposal", 25, false, COLOR_SUCCESS),
-                ],
-              }),
-              new TableRow({
-                children: [
-                  createDataCell("Step 3", 10, true, COLOR_GOLD, true),
-                  createDataCell("Deterministic Policy Decision & Await Analyst Approval", 40, false, COLOR_TEXT, true),
-                  createDataCell("Human SOC / Policy Engine", 25, true, COLOR_GOLD, true),
-                  createDataCell("APPROVAL GATE", 25, false, COLOR_GOLD, true, COLOR_BG_LIGHT),
-                ],
-              }),
-              new TableRow({
-                children: [
-                  createDataCell("Step 4", 10, true),
-                  createDataCell("Execute perimeter firewall block via Action Broker (1h TTL)", 40),
-                  createDataCell("action_broker", 25, true),
-                  createDataCell("Policy-Gated Execution", 25, false, COLOR_SUCCESS),
-                ],
-              }),
-              new TableRow({
-                children: [
-                  createDataCell("Step 5", 10, true),
-                  createDataCell("Verify block enforcement & notify on-call responders", 40),
-                  createDataCell("orchestrator", 25, true),
-                  createDataCell("Automated Verification", 25, false, COLOR_SUCCESS),
-                ],
-              }),
-              new TableRow({
-                children: [
-                  createDataCell("Step 6", 10, true),
-                  createDataCell("Post-incident review, auto-rollback after TTL & IOC export", 40),
-                  createDataCell("Analyst / System", 25, true),
-                  createDataCell("Hybrid Verification", 25, false, COLOR_MUTED),
-                ],
-              }),
-            ],
-          }),
+          // Screenshot 1: Architecture & Autonomy Tiers
+          ...createScreenshotFigure(
+            ss1Path,
+            "Figure 1: Documentation Portal — 3-Plane System Architecture, Multi-Agent Node Sequence, ActionSpec Contract & 5-Tier Autonomy Matrix.",
+            340,
+            595
+          ),
 
-          new Paragraph({ spacing: { before: 180, after: 80 } }),
+          // Screenshot 2: PB-001 Policy-First Playbook
+          ...createScreenshotFigure(
+            ss2Path,
+            "Figure 2: PB-001 Playbook Table — Verified Step 3 (Approval Gate) positioned strictly BEFORE Step 4 (Action Broker Execution with 1h TTL).",
+            440,
+            525
+          ),
 
-          // 3.2
-          new Paragraph({
-            heading: HeadingLevel.HEADING_2,
-            children: [
-              new TextRun({
-                text: "3.2 ActionSpec Contract & Policy Engine (P0-03)",
-                font: "Segoe UI",
-                size: 22,
-                bold: true,
-                color: COLOR_ACCENT,
-              }),
-            ],
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: "The typed ActionProposal interface prevents prompt injection and arbitrary command execution by constraining agent output to an allowlisted schema:",
-              }),
-            ],
-          }),
+          // Screenshot 3: Command Dashboard & Sandbox Banner
+          ...createScreenshotFigure(
+            ss3Path,
+            "Figure 3: Operator Command Dashboard — Live Sandbox Simulation Environment banner, calibrated metrics, Inbound Alert Queue, and Capabilities Matrix.",
+            560,
+            265
+          ),
 
-          createCodeBlock([
-            "// ActionProposal Contract (frontend/src/types/index.ts & backend/app/models.py)",
-            "interface ActionProposal {",
-            '  id: string;                  // e.g. "ACT-001"',
-            '  tenant_id: string;           // e.g. "tenant-acme-corp"',
-            '  incident_id: string;         // e.g. "INC-8802"',
-            '  action_type: string;         // e.g. "firewall_block"',
-            '  target_type: string;         // e.g. "ip"',
-            '  target_id: string;           // e.g. "185.220.101.47"',
-            "  evidence_refs: string[];     // ['EVID-001', 'EVID-002']",
-            "  rationale: string;           // Grounded evidence citation",
-            "  risk_tier: AutonomyTier;     // Tier 0 through Tier 4",
-            "  blast_radius: string;        // Scope of impact",
-            "  ttl_seconds: number;         // 3600 (1-hour auto-rollback TTL)",
-            "  preconditions: string[];     // Pre-execution system checks",
-            "  postconditions: string[];    // Post-execution verification probes",
-            "  rollback_action: string;     // Compensating rollback function",
-            '  requested_by_agent: string;  // "ResponseAgent_v1.2"',
-            "}",
-          ]),
-
-          new Paragraph({ spacing: { before: 180, after: 80 } }),
-
-          // 3.3
-          new Paragraph({
-            heading: HeadingLevel.HEADING_2,
-            children: [
-              new TextRun({
-                text: "3.3 Five-Tier Autonomy & Authorization Matrix (P0-12)",
-                font: "Segoe UI",
-                size: 22,
-                bold: true,
-                color: COLOR_ACCENT,
-              }),
-            ],
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: "Every platform action is assigned an explicit Autonomy Tier determining the required authorization level:",
-              }),
-            ],
-          }),
-
-          new Table({
-            width: { size: 100, type: WidthType.PERCENTAGE },
-            rows: [
-              new TableRow({
-                children: [
-                  createHeaderCell("Tier", 15),
-                  createHeaderCell("Category", 20),
-                  createHeaderCell("Permitted Operations", 35),
-                  createHeaderCell("Authorization Requirement", 30),
-                ],
-              }),
-              new TableRow({
-                children: [
-                  createDataCell("Tier 0", 15, true, COLOR_MUTED, true),
-                  createDataCell("Observe", 20, false, COLOR_TEXT, true),
-                  createDataCell("Summarize evidence, ATT&CK mapping, case notes, search queries.", 35),
-                  createDataCell("Automatic; read-only tools.", 30, false, COLOR_SUCCESS),
-                ],
-              }),
-              new TableRow({
-                children: [
-                  createDataCell("Tier 1", 15, true, COLOR_MUTED, true),
-                  createDataCell("Administrative", 20, false, COLOR_TEXT, true),
-                  createDataCell("Create case ticket, add metadata tags, draft responder notifications.", 35),
-                  createDataCell("Automatic when reversible and tenant-approved.", 30, false, COLOR_SUCCESS),
-                ],
-              }),
-              new TableRow({
-                children: [
-                  createDataCell("Tier 2", 15, true, COLOR_GOLD, true),
-                  createDataCell("Bounded Containment", 20, false, COLOR_TEXT, true),
-                  createDataCell("Short-lived isolation of non-critical test endpoint; low blast radius.", 35),
-                  createDataCell("Policy-governed with approval; bounded auto-execution post-validation.", 30, false, COLOR_GOLD),
-                ],
-              }),
-              new TableRow({
-                children: [
-                  createDataCell("Tier 3", 15, true, COLOR_NAVY, true),
-                  createDataCell("Disruptive", 20, false, COLOR_TEXT, true),
-                  createDataCell("Perimeter firewall block, account disable, isolate critical server.", 35),
-                  createDataCell("Explicit Analyst Approval Gate Required.", 30, false, COLOR_NAVY, true),
-                ],
-              }),
-              new TableRow({
-                children: [
-                  createDataCell("Tier 4", 15, true, COLOR_PRIMARY, true),
-                  createDataCell("Destructive", 20, false, COLOR_TEXT, true),
-                  createDataCell("Terminate infrastructure, wipe endpoint, irreversible directory changes.", 35),
-                  createDataCell("Never LLM-only. Strict dual control and privileged authorization.", 30, false, COLOR_PRIMARY, true),
-                ],
-              }),
-            ],
-          }),
+          // Screenshot 4: Incident Contained State & Evidence
+          ...createScreenshotFigure(
+            ss4Path,
+            "Figure 4: Incident Investigation View (INC-8802) — MITRE ATT&CK T1110.001 mapping (94% confidence), Multi-Agent synthesis, and CONTAINED status following Action Broker execution.",
+            560,
+            261
+          ),
 
           new Paragraph({ spacing: { before: 240, after: 120 } }),
 
           // ==========================================
-          // 4. Verification & Validation Evidence
+          // 4. Verification & Build Evidence
           // ==========================================
           new Paragraph({
             heading: HeadingLevel.HEADING_1,
@@ -693,7 +531,7 @@ async function buildDocument() {
           new Paragraph({
             children: [
               new TextRun({
-                text: "All 24 findings and design requirements from the Independent Technical Review are 100% complete, verified, and pushed to the master git repository. The platform is ready for staging sandbox evaluation and pilot onboarding.",
+                text: "All 24 findings and design requirements from the Independent Technical Review are 100% complete, verified with visual evidence, and pushed to the master git repository. The platform is ready for staging sandbox evaluation and pilot onboarding.",
               }),
             ],
           }),
