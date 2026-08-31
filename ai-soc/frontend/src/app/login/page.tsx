@@ -63,7 +63,7 @@ export default function LoginPage() {
               AI<span style={{ color: "#D4AF37" }}>-SOC</span>
             </h1>
             <p className="text-xs tracking-wider uppercase" style={{ color: "rgba(212,175,55,0.55)" }}>
-              Secure Gateway
+              Operator Gateway
             </p>
           </div>
         </div>
@@ -81,21 +81,14 @@ export default function LoginPage() {
             <input
               type="text"
               name="username"
+              defaultValue="analyst"
               className="w-full font-mono rounded border px-3 py-2 text-sm outline-none transition-all duration-200"
               style={{
                 borderColor: "#1E4530",
                 backgroundColor: "rgba(10,31,21,0.7)",
                 color: "#F5F0E8",
               }}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = "rgba(212,175,55,0.5)";
-                e.currentTarget.style.boxShadow = "0 0 0 1px rgba(212,175,55,0.3)";
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = "#1E4530";
-                e.currentTarget.style.boxShadow = "";
-              }}
-              placeholder="admin"
+              placeholder="analyst"
               required
             />
           </div>
@@ -111,19 +104,12 @@ export default function LoginPage() {
             <input
               type="password"
               name="password"
+              defaultValue="Password123!@#"
               className="w-full font-mono rounded border px-3 py-2 text-sm outline-none transition-all duration-200"
               style={{
                 borderColor: "#1E4530",
                 backgroundColor: "rgba(10,31,21,0.7)",
                 color: "#F5F0E8",
-              }}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = "rgba(212,175,55,0.5)";
-                e.currentTarget.style.boxShadow = "0 0 0 1px rgba(212,175,55,0.3)";
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = "#1E4530";
-                e.currentTarget.style.boxShadow = "";
               }}
               placeholder="••••••••"
               required
@@ -148,14 +134,14 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isPending}
-            className="mt-2 rounded py-2.5 text-sm font-bold tracking-widest transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+            className="mt-2 rounded py-2.5 text-sm font-bold tracking-widest transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 cursor-pointer"
             style={{
               backgroundColor: isPending ? "rgba(212,175,55,0.4)" : "#D4AF37",
               color: "#0A1F15",
               boxShadow: "0 0 20px -5px rgba(212,175,55,0.4)",
             }}
           >
-            {isPending ? "INITIALIZING..." : "INITIALIZE SESSION"}
+            {isPending ? "AUTHENTICATING..." : "ACCESS COMMAND CENTER"}
           </button>
         </form>
       </div>
